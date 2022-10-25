@@ -16,6 +16,18 @@ const Home = () => {
         loadData();
   },[]);
 
+  const deleteContact = async (id) => {
+
+    if(window.confirm(`Are You Sure that you want to delete that Student ?`)){
+
+        await axios.delete(`http://localhost:2800/api/delete/${id}`);
+        toast.success(`Contact Deleted Successfully !!`);
+        setTimeout(() => loadData() , 500);
+
+    }
+
+  }
+
   return (
     <>
         <h1> Home </h1>
@@ -38,20 +50,18 @@ const Home = () => {
                         return (
                             <tr>
                                 <th> {index+1} </th>
-                                <th> {item.enrollment} </th>
+                                <th> {item.id} </th>
                                 <th> {item.name} </th>
                                 <th> {item.email} </th>
                                 <th> {item.section} </th>
                                 <td>
-                                    <Link to={`/update/${item.id}`}>
-                                        <button> Edit </button>
-                                    </Link>
-                                    <Link to={`/update/${item.id}`}>
-                                        <button> Delete </button>
-                                    </Link>
-                                    <Link to={`/update/${item.id}`}>
+                                    <Link to={`/viewstudent/${item.id}`}>
                                         <button> View </button>
                                     </Link>
+                                    <Link to={`/updatestudent/${item.id}`}>
+                                        <button> Edit </button>
+                                    </Link>
+                                    <button onClick={() => deleteContact(item.id)}> Delete </button>
                                 </td>
                             </tr>
                         )
