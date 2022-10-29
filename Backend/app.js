@@ -17,6 +17,10 @@ const db = mysql.createPool({
     database : "crud_students"
 });
 
+app.get("/",(Req,res) => {
+    res.send(`Hello Shubham`);
+});
+
 app.get("/api/getAllStudents" , (req,res) => {
     const sqlGet = "Select * from students_db";
     db.query(sqlGet,(err,result) => {
@@ -30,31 +34,32 @@ app.get("/api/getAllStudents" , (req,res) => {
 });
 
 app.post("/api/post",(req,res) => {
-    const { name , email , id , section } = req.body;
-    const sqlInsert = "INSERT INTO students_db(id,name,email,section) VALUES (?,?,?,?)";
-    db.query(sqlInsert , [id,name,email,section] , (err,result) => {
+    const { first_name , last_name , email , enrollment, branch , section } = req.body;
+    const sqlInsert = "INSERT INTO students_db(enrollment,first_name,last_name,email,branch,section) VALUES (?,?,?,?,?,?)";
+    db.query(sqlInsert , [enrollment,first_name,last_name,email,branch,section] , (err,result) => {
         if(err){
             console.log(err);
+            return res.status(400).json({message : `Student Already Present`});
         }
-        res.status(202).json({message : `Students Added Succesfully !!`});
+        return res.json({message : `Students Added Succesfully !!`});
     });
 });
 
-app.delete("/api/delete/:id",(req,res) => {
-    const { id } = req.params;
-    const sqlDelete = "DELETE FROM students_db WHERE id=?";
-    db.query(sqlDelete , id , (err,result) => {
+app.delete("/api/delete/:enrollmentID",(req,res) => {
+    const { enrollmentID } = req.params;
+    const sqlDelete = "DELETE FROM students_db WHERE enrollment=?";
+    db.query(sqlDelete , enrollmentID , (err,result) => {
         if(err){
             console.log(err);
         }
-        res.status(202).json({message : `Students Deleted Succesfully !!`});
+        res.json({message : `Students Deleted Succesfully !!`});
     });
 });
 
-app.get("/api/getbyid/:id" , (req,res) => {
-    const {id} = req.params;
-    const sqlGet = "SELECT * FROM students_db WHERE id=?";
-    db.query(sqlGet,id,(err,result) => {
+app.get("/api/getbyid/:enrollmentID" , (req,res) => {
+    const {enrollmentID} = req.params;
+    const sqlGet = "SELECT * FROM students_db WHERE enrollment=?";
+    db.query(sqlGet,enrollmentID,(err,result) => {
         if(err){
             console.log(err);
         }
@@ -64,11 +69,11 @@ app.get("/api/getbyid/:id" , (req,res) => {
     })
 });
 
-app.put("/api/update/:id" , (req,res) => {
-    const {id} = req.params;
-    const { name , email , section } = req.body;
-    const sqlUpdate = "UPDATE students_db SET name = ? , email = ?, section = ? WHERE id = ?";
-    db.query(sqlUpdate,[name,email,section,id],(err,result) => {
+app.put("/api/update/:enrollmentID" , (req,res) => {
+    const {enrollmentID} = req.params;
+    const { first_name , last_name , email , branch , section } = req.body;
+    const sqlUpdate = "UPDATE students_db SET first_name = ? , last_name = ? , email = ?, branch = ? , section = ? WHERE enrollment = ?";
+    db.query(sqlUpdate,[first_name , last_name , email , branch , section , enrollmentID],(err,result) => {
         if(err){
             console.log(err);
         }
@@ -78,17 +83,30 @@ app.put("/api/update/:id" , (req,res) => {
     })
 });
 
-app.get("/",(Req,res) => {
-    // const sqlInsert = "INSERT INTO students_db(id,name,email,section) VALUES ('0832CS201157','Shubham Jain','Shubhamjainpvt28@gmail.com','C Section')";
-    // db.query(sqlInsert,(err,result) => {
-    //     if(err){
-    //         console.log(err);
-    //     }
-    //     else{
-    //         console.log(result);
-    //     }
-    // })
-    res.send(`Hello Shubham`);
+app.get("/api/getBySection/:sectionID", (req,res)=>{
+    const { sectionID } = req.params;
+    const GetStudent = `SELECT * FROM students_db WHERE section=?`;
+    db.query(GetStudent , sectionID , (err,result)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            res.send(result);
+        }
+    } )
+});
+
+app.get("/api/getByBranch/:branchID", (req,res)=>{
+    const { branchID } = req.params;
+    const GetStudent = `SELECT * FROM students_db WHERE branch=?`;
+    db.query(GetStudent , branchID , (err,result)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            res.send(result);
+        }
+    } )
 });
 
 app.listen(PORT, ()=> {

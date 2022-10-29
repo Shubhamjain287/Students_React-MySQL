@@ -5,6 +5,7 @@ import AddStudent from './pages/AddStudent';
 import Home from './pages/Home';
 import ViewStudent from './pages/ViewStudent';
 import './App.css';
+import Navbar from './pages/Navbar';
 
 function App() {
   return (
@@ -12,10 +13,11 @@ function App() {
       <BrowserRouter>
         <ToastContainer position="top-center" />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navbar />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/addstudent" element={<AddStudent />} />
-          <Route path="/updatestudent/:userID" element={<AddStudent />} />
-          <Route path="/viewstudent/:userID" element={ <ViewStudent /> } />
+          <Route path="/updatestudent/:enrollmentID" element={<AddStudent />} />
+          <Route path="/viewstudent/:enrollmentID" element={ <ViewStudent /> } />
         </Routes>
       </BrowserRouter>
     </>
